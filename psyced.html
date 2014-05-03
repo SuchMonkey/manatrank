@@ -7,16 +7,103 @@
 				padding: 0px;
 			}
 			canvas#eCanvas {
-				background-color: black;
+				background-color: white;
+				position: absolute;
+				display:block;
 			}
+			
+			div#ePlayer {
+				width: 280px;
+				height: 100px;
+				
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 5px;
+				left: 0;
+				margin-left: auto;
+				margin-right: auto;
+				margin-top: auto;
+				
+				
+				background: rgba(50, 50, 50, 0.5);
+				background: -webkit-linear-gradient(top, rgba(50, 50, 50, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%);
+				background: -moz-linear-gradient(top, rgba(50, 50, 50, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%);
+				background: -o-linear-gradient(top, rgba(50, 50, 50, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%);
+				background: -ms-linear-gradient(top, rgba(50, 50, 50, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%);
+				background: linear-gradient(top, rgba(50, 50, 50, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%);
+				
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				
+				-moz-box-shadow: -1px -1px 5px #000;
+				-webkit-box-shadow: -1px -1px 5px #000;
+				box-shadow: inset -1px -1px 5px #000;
+				
+				color: rgba(222,222,222,1);
+			}
+			
+			div#ePlayer ul {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
+			
+			div#ePlayer li {
+				margin-top: 10px;
+				margin-left: 10px;
+				float: left;
+				display: block;
+				width: 80px;
+				height: 80px;
+				
+				
+				background: rgba(100, 100, 100, 0.5);
+				background: -webkit-linear-gradient(top, rgba(100, 100, 100, 0.5) 0%, rgba(50, 50, 50, 0.5) 100%);
+				background: -moz-linear-gradient(top, rgba(100, 100, 100, 0.5) 0%, rgba(50, 50, 50, 0.5) 100%);
+				background: -o-linear-gradient(top, rgba(100, 100, 100, 0.5) 0%, rgba(50, 50, 50, 0.5) 100%);
+				background: -ms-linear-gradient(top, rgba(100, 100, 100, 0.5) 0%, rgba(50, 50, 50, 0.5) 100%);
+				background: linear-gradient(top, rgba(100, 100, 100, 0.5) 0%, rgba(50, 50, 50, 0.5) 100%);
+				
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				
+				-moz-box-shadow: inset -1px -1px 5px #000;
+				-webkit-box-shadow: inset -1px -1px 5px #000;
+				box-shadow: inset -1px -1px 5px #000;
+								
+				color: rgba(222,222,222,1);
+			}
+			
+			div#ePlayer li:hover {
+				background: rgba(110, 110, 110, 0.5);
+				background: -webkit-linear-gradient(top, rgba(110, 110, 110, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%);
+				background: -moz-linear-gradient(top, rgba(110, 110, 110, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%);
+				background: -o-linear-gradient(top, rgba(110, 110, 110, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%);
+				background: -ms-linear-gradient(top, rgba(110, 110, 110, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%);
+				background: linear-gradient(top, rgba(110, 110, 110, 0.5) 0%, rgba(60, 60, 60, 0.5) 100%);
+			
+				-moz-box-shadow: inset 0px 0px 5px #000;
+				-webkit-box-shadow: inset 0px 0px 5px #000;
+				box-shadow: inset 0px 0px 5px #000;
+			}
+			
 		</style>
 	</head>
 	<body>
-		<audio id="eAudio" controls>
+		<audio id="eAudio">
 		</audio>
 		<canvas id="eCanvas">
 		</canvas>
-		
+		<div id="ePlayer">
+			<ul>
+				<li id="btnPlay">Play</li>
+				<li id="btnStop">Stop</li>
+				<li>Vol</li>
+			<ul>
+		</div>
 		<script type="text/javascript" src="jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="psyced.js"></script>
 	</body>

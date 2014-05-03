@@ -4,8 +4,10 @@ $(document).ready(function() {
 	// http://88.198.48.36:8000/prog
 	var aSrc = "http://78.46.73.237:8000/schizoid";
 	var aFftSize = 2048;
+	var aSmoothingTimeConstant = "0.8";
 	var aContext;
 	var aAnalyser;
+	
 	var aFreqDomain;
 	var aTimeDomain;
 	
@@ -15,9 +17,6 @@ $(document).ready(function() {
 	var	cWidth;
 	var cHeight;
 	var cContext;
-	
-	//var cTelement = document.createElement('canvas');
-	
 
 	//Init Audio
 	if (typeof AudioContext !== "undefined") {
@@ -31,6 +30,7 @@ $(document).ready(function() {
 	
 	aAnalyser = aContext.createAnalyser();
 	aAnalyser.fftSize = aFftSize;
+	aAnalyser.smoothingTimeConstant = aSmoothingTimeConstant;
 	aFreqDomain = new Uint8Array(aAnalyser.frequencyBinCount);
 	aTimeDomain = new Uint8Array(aAnalyser.frequencyBinCount);
 	
@@ -45,18 +45,14 @@ $(document).ready(function() {
 	
 	//Init Canvas
 	cContext = cElement.getContext("2d");
-	//cTcontext = cTelement.getContext("2d");
 	
 	var resizeCanvas = function() {
 		cWidth = window.innerWidth;
 		cHeight = window.innerHeight;
 		cElement.width = cWidth;
 		cElement.height = cHeight;
-		//cTelement.width = cWidth;
-		//cTelement.height = cHeight;
 	}
 	$(window).resize(resizeCanvas);
-	
 	
 	//Init requestAnimationFrame
 	// requestAnimationFrame polyfill by Erik Möller
@@ -86,56 +82,18 @@ $(document).ready(function() {
 			clearTimeout(id);
 		};
 	}
-
-//#################################################################################################
-	var afterGlow = function(alphaFadingRatio, offset, direction) {
-		
-		direction = ((direction % 360) / 180) * Math.PI;
-		var left = Math.sin(direction);
-		left = left * offset;
-		var top = Math.cos(direction);
-		top = top * offset;
-		
-		var cImageData = cContext.getImageData(left, top, cWidth, cHeight);
-
-		alphaFadingRatio = 2.55 * alphaFadingRatio;
-		
-		for(var i = 0; i < cImageData.data.length; i += 4) {
-			var alpha = cImageData.data[i + 3];
-			if(alpha > alphaFadingRatio) {
-				cImageData.data[i + 3] = Math.round(alpha - alphaFadingRatio);
-			}
-			else{
-				cImageData.data[i + 3] = 0;
-			}
-		}
-		//cContext.clearRect(0, 0, cWidth, cHeight)
-		cContext.putImageData(cImageData, 0, 0);
-	};
 	
-	var afterGlow2 = function(alphaFadingRatio, offset, direction) {
-		
-		
-		direction = ((direction % 360) / 180) * Math.PI;
-		var left = Math.sin(direction) * offset;
-		var top = Math.cos(direction) * offset;
-		
-		
-		
-		cTcontext.canvas = cContext.canvas;
-		
-		cContext.clearRect(0, 0, cWidth, cHeight);
-		cContext.save();
-		cContext.globalAlpha = 0.5;
-		cContext.drawImage(cTcontext.canvas, left, top);
-		
-		cContext.restore();
-		
-		
-		
-	};
+	//Hook up Buttons
+	$("#btnPlay").click(function() {
+		aElement.play();
+	});
+	
+	$("#btnStop").click(function(){
+		aElement.pause();
+	});
+
 	var huemod = 0;
-	var startAnimation = function() { 
+	var startAnimation2 = function() { 
 		requestAnimationFrame(startAnimation);
 		huemod = 0;
 		for(var i = 0; i < aFreqDomain.length; i++) {
@@ -179,8 +137,69 @@ $(document).ready(function() {
 		
 		
 		
-	}; 
-	aAnalyser.smoothingTimeConstant = "0.8";
+	};
+	
+	var animationFrame;
+	var animationCount = 0;
+	
+	var animationSettings = function() {
+		// AA hack
+		cContext.translate(0.5, 0.5);
+		// composting
+		cContext.globalCompositeOperation = "lighter";
+	};
+	
+	var animation = function(hrt) {
+	
+		// Update aAnalyser Data
+		aAnalyser.getByteTimeDomainData(aTimeDomain);
+		aAnalyser.getByteFrequencyData(aFreqDomain);
+		
+		// +1 animationCount mod 360 - would deliver valid deg value
+		animationCount = (animationCount + 1) % 360;
+		
+		// Prepare Canvas for next Frame
+		cContext.clearRect(0,0,cWidth, cHeight);
+		
+		// for each aAnalyser Data
+		cContext.save();
+			cContext.beginPath();
+			for(var i = 0; i < aAnalyser.frequencyBinCount; i++) {
+				
+				drawWaveForm(i);
+				
+			}
+			cContext.lineJoin = "round";
+			
+			cContext.lineWidth = 1;
+			cContext.strokeStyle = 'black';
+			cContext.stroke();
+		cContext.restore();
+		
+		// other Animation stuff
+		
+				
+		animationFrame = requestAnimationFrame(animation);
+	};
+	
+	var drawWaveForm = function(i) {
+		var x = ( cWidth / ( aAnalyser.frequencyBinCount - 1 ) ) * ( i );
+		var y = ( aTimeDomain[i] * 100 / 255 ) * ( cHeight / 100);
+
+		cContext.lineTo(x, y);
+		cContext.arc(x, y, 5, 0, 2 * Math.PI, false);
+	};
+	
+	var startAnimation = function() {
+		animationSettings();
+		animationFrame = requestAnimationFrame(animation);
+	};
+	
+	var stopAnimation = function() {
+		cancelAnimationFrame(animationFrame);
+	};
+	
+	
 	aElement.play();
 	resizeCanvas();
 	startAnimation();
