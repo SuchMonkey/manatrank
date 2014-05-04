@@ -82,15 +82,6 @@ $(document).ready(function() {
 			clearTimeout(id);
 		};
 	}
-	
-	//Hook up Buttons
-	$("#btnPlay").click(function() {
-		aElement.play();
-	});
-	
-	$("#btnStop").click(function(){
-		aElement.pause();
-	});
 
 	var huemod = 0;
 	var startAnimation2 = function() { 
@@ -190,17 +181,34 @@ $(document).ready(function() {
 		cContext.arc(x, y, 5, 0, 2 * Math.PI, false);
 	};
 	
-	var startAnimation = function() {
-		animationSettings();
-		animationFrame = requestAnimationFrame(animation);
+	
+	
+	var playerStatus = false;
+	
+	var start = function() {
+		if(!playerStatus) {
+			aElement.play();
+			animationSettings();
+			animationFrame = requestAnimationFrame(animation);
+			playerStatus = true;
+			console.log("started " + playerStatus);
+		}
 	};
 	
-	var stopAnimation = function() {
-		cancelAnimationFrame(animationFrame);
+	var stop = function() {
+		if(playerStatus) {
+			aElement.pause();
+			cancelAnimationFrame(animationFrame);
+			playerStatus = false;
+			console.log("stopped " + playerStatus);
+		}
 	};
 	
+	//Hook up Buttons
+	$("#btnPlay").click(start);
 	
-	aElement.play();
+	$("#btnStop").click(stop);
+	
 	resizeCanvas();
-	startAnimation();
+	start();
 });
